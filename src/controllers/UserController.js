@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { User } = require("../models/UserModel");
+const { comparePassword, generateJwt } = require("../utils/userAuthFunctions");
 
 const router = express.Router();
 
@@ -54,7 +55,24 @@ router.post("/register", async (request, response) => {
 // request.body = {username: "admin", password: "password1"}
 // respond with {jwt: 7y743hfh9fhwr8hf98fh4}
 router.post("/login", async (request, response) => {
-  return null;
+  // Find user by provided username
+  let user = await User.findOne({ username: request.body.username }).catch(
+    (error) => error
+  );
+  // Check if the password is correct
+  let isPasswordCorrect = await comparePassword(
+    request.body.password,
+    user.password
+  );
+
+  if (!isPasswordCorrect) {
+    response.status(403).json({ error: "Wrong password" });
+  }
+
+  // If credentials match the user entry, generate a JWT
+  let jwt = generateJwt(user._id.toString());
+
+  response.json({ jwt: jwt });
 });
 
 // Verify user using their jwt
