@@ -10,6 +10,9 @@ app.get("/", (request, response) => {
   });
 });
 
+const userRouter = require("./controllers/UserController");
+app.use("/users", userRouter);
+
 module.exports = {
   app,
 };
