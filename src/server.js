@@ -1,8 +1,14 @@
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
+var corsOptions = {
+  origin: ["localhost:3000/"],
+};
+
 app.use(express.json());
+app.use(cors(corsOptions));
 
 app.get("/", (request, response) => {
   response.json({
